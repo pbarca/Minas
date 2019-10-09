@@ -45,7 +45,6 @@
                 Quadro(li, co).minas = 0
                 Quadro(li, co).bomba = False
                 Quadro(li, co).clicada = False
-                Quadro(li, co).minas = False
             Next
         Next
         Call airstrike()
