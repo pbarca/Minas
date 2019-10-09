@@ -62,7 +62,7 @@
                 Quadro(li, co).linha = li
                 Quadro(li, co).coluna = co
                 Quadro(li, co).BackgroundImageLayout = ImageLayout.Stretch
-                Quadro(li, co).Location = New Point(80 + 66 * co, 50 + 66 * li)
+                Quadro(li, co).Location = New Point(80 + 66 * co, 60 + 66 * li)
                 Quadro(li, co).Size = New Size(64, 64)
                 Quadro(li, co).Visible = True
                 AddHandler Quadro(li, co).Click, AddressOf Clicar
