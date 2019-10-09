@@ -36,22 +36,16 @@
         Quadro(r, c).minas = bombas
     End Sub
 
-
-    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+    Sub Inicializa()
         For li = 0 To 8
             For co = 0 To 8
-                Quadro(li, co) = New MyPictureBox
-                Quadro(li, co).Name = "quadro" + Str(li) + Str(co)
-                Quadro(li, co).linha = li
-                Quadro(li, co).coluna = co
-                Quadro(li, co).BackgroundImageLayout = ImageLayout.Stretch
                 Quadro(li, co).BorderStyle = BorderStyle.FixedSingle
                 Quadro(li, co).BackColor = Color.AliceBlue
-                Quadro(li, co).Location = New Point(80 + 66 * co, 50 + 66 * li)
-                Quadro(li, co).Size = New Size(64, 64)
-                Quadro(li, co).Visible = True
-                AddHandler Quadro(li, co).Click, AddressOf Clicar
-                Me.Controls.Add(Quadro(li, co))
+                Quadro(li, co).BackgroundImage = Nothing
+                Quadro(li, co).minas = 0
+                Quadro(li, co).bomba = False
+                Quadro(li, co).clicada = False
+                Quadro(li, co).minas = False
             Next
         Next
         Call airstrike()
@@ -61,28 +55,65 @@
             Next
         Next
     End Sub
+    Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        For li = 0 To 8
+            For co = 0 To 8
+                Quadro(li, co) = New MyPictureBox
+                Quadro(li, co).Name = "quadro" + Str(li) + Str(co)
+                Quadro(li, co).linha = li
+                Quadro(li, co).coluna = co
+                Quadro(li, co).BackgroundImageLayout = ImageLayout.Stretch
+                Quadro(li, co).Location = New Point(80 + 66 * co, 50 + 66 * li)
+                Quadro(li, co).Size = New Size(64, 64)
+                Quadro(li, co).Visible = True
+                AddHandler Quadro(li, co).Click, AddressOf Clicar
+                Me.Controls.Add(Quadro(li, co))
+            Next
+        Next
+        Call Inicializa()
+
+    End Sub
     Sub Clicar(ByVal sender As System.Object, ByVal e As System.EventArgs)
         If sender.clicada Then : Return
-        Else : sender.clicada = True
         End If
-        sender.BackgroundImage = Nothing
-        sender.BackColor = Nothing
-        sender.BorderStyle = Nothing
+        Call Jogar(sender.linha, sender.coluna)
+    End Sub
+    Sub Jogar(r, c)
+        Dim aux = Quadro(r, c)
+        aux.clicada = True
+        aux.BackgroundImage = Nothing
+        aux.BackColor = Nothing
+        aux.BorderStyle = Nothing
 
-        If sender.bomba Then
-            sender.BackgroundImage = My.Resources.Mine
+        If aux.bomba Then
+            aux.BackgroundImage = My.Resources.Mine
+            Beep()
+            MsgBox("Bombaaaa!!! Novo Jogo?",, "Game Over")
+            Call Inicializa()
+            Return
         Else
-            Select Case sender.minas
-                Case 1 : sender.BackgroundImage = My.Resources._1
-                Case 2 : sender.BackgroundImage = My.Resources._2
-                Case 3 : sender.BackgroundImage = My.Resources._3
-                Case 4 : sender.BackgroundImage = My.Resources._4
-                Case 5 : sender.BackgroundImage = My.Resources._5
-                Case 6 : sender.BackgroundImage = My.Resources._6
-                Case 7 : sender.BackgroundImage = My.Resources._7
-                Case 8 : sender.BackgroundImage = My.Resources._8
+            Select Case aux.minas
+                Case 1 : aux.BackgroundImage = My.Resources._1
+                Case 2 : aux.BackgroundImage = My.Resources._2
+                Case 3 : aux.BackgroundImage = My.Resources._3
+                Case 4 : aux.BackgroundImage = My.Resources._4
+                Case 5 : aux.BackgroundImage = My.Resources._5
+                Case 6 : aux.BackgroundImage = My.Resources._6
+                Case 7 : aux.BackgroundImage = My.Resources._7
+                Case 8 : aux.BackgroundImage = My.Resources._8
             End Select
-
         End If
+
+        If Quadro(r, c).minas = 0 Then
+            For x = r - 1 To r + 1
+                For y = c - 1 To c + 1
+                    If x >= 0 And x < 9 And y >= 0 And y < 9 Then
+                        If Not Quadro(x, y).clicada Then : Call Jogar(x, y)
+                        End If
+                    End If
+                Next
+            Next
+        End If
+
     End Sub
 End Class
