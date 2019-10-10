@@ -5,6 +5,7 @@
         Public Property coluna As Integer
         Public Property minas As Integer
         Public Property bomba = False
+        Public Property flag = False
         Public Property clicada = False
     End Class
     Dim Quadro(9, 9) As MyPictureBox
@@ -40,10 +41,11 @@
         For li = 0 To 8
             For co = 0 To 8
                 Quadro(li, co).BorderStyle = BorderStyle.FixedSingle
-                Quadro(li, co).BackColor = Color.AliceBlue
+                Quadro(li, co).BackColor = Color.LightGray
                 Quadro(li, co).BackgroundImage = Nothing
                 Quadro(li, co).minas = 0
                 Quadro(li, co).bomba = False
+                Quadro(li, co).flag = False
                 Quadro(li, co).clicada = False
             Next
         Next
@@ -65,23 +67,38 @@
                 Quadro(li, co).Location = New Point(80 + 66 * co, 60 + 66 * li)
                 Quadro(li, co).Size = New Size(64, 64)
                 Quadro(li, co).Visible = True
-                AddHandler Quadro(li, co).Click, AddressOf Clicar
+                AddHandler Quadro(li, co).MouseClick, AddressOf Clicar
                 Me.Controls.Add(Quadro(li, co))
             Next
         Next
         Call Inicializa()
 
     End Sub
-    Sub Clicar(ByVal sender As System.Object, ByVal e As System.EventArgs)
+    Sub Clicar(ByVal sender As System.Object, ByVal e As System.Windows.Forms.MouseEventArgs)
+
         If sender.clicada Then : Return
         End If
+
+        If sender.flag Then
+            sender.BackgroundImage = Nothing
+            sender.flag = False
+            Return
+        End If
+
+        If e.Button = MouseButtons.Right Then
+            sender.BackgroundImage = My.Resources.Flag
+            sender.flag = True
+            Return
+        End If
+
         Call Jogar(sender.linha, sender.coluna)
     End Sub
     Sub Jogar(r, c)
         Dim aux = Quadro(r, c)
         aux.clicada = True
         aux.BackgroundImage = Nothing
-        aux.BackColor = Nothing
+        aux.BackColor = Color.White
+
         aux.BorderStyle = Nothing
 
         If aux.bomba Then
@@ -114,5 +131,12 @@
             Next
         End If
 
+    End Sub
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Beep()
+        Dim resposta = MsgBox("Tem a certeza?", vbYesNo, "Novo Jogo")
+        If resposta = vbNo Then Return
+        Call Inicializa()
     End Sub
 End Class
