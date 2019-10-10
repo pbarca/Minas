@@ -9,13 +9,15 @@
         Public Property clicada = False
     End Class
     Dim Quadro(9, 9) As MyPictureBox
+    Dim start = False
+
     Sub airstrike()
         Dim bombas = 0
         Dim l, c As Integer
         Do
             l = Int(Rnd() * 9)
             c = Int(Rnd() * 9)
-            If Not Quadro(l, c).bomba Then
+            If Not Quadro(l, c).bomba And Not Quadro(l, c).clicada Then
                 Quadro(l, c).bomba = True
                 bombas += 1
             End If
@@ -49,6 +51,23 @@
                 Quadro(li, co).clicada = False
             Next
         Next
+        start = False
+    End Sub
+    Sub VerSeGanhou()
+        Dim c = 0
+        For li = 0 To 8
+            For co = 0 To 8
+                If Quadro(li, co).clicada Then : c += 1
+                End If
+            Next
+        Next
+        If c > 70 Then
+            MsgBox("Parabéns!!! Novo Jogo?",, "Fim do Jogo")
+            Call Inicializa()
+        End If
+    End Sub
+
+    Sub IniciarBombas()
         Call airstrike()
         For li = 0 To 8
             For co = 0 To 8
@@ -92,14 +111,19 @@
         End If
 
         Call Jogar(sender.linha, sender.coluna)
+        Call VerSeGanhou()
     End Sub
     Sub Jogar(r, c)
         Dim aux = Quadro(r, c)
         aux.clicada = True
         aux.BackgroundImage = Nothing
         aux.BackColor = Color.White
-
         aux.BorderStyle = Nothing
+
+        If Not start Then
+            start = True
+            Call IniciarBombas()
+        End If
 
         If aux.bomba Then
             aux.BackgroundImage = My.Resources.Mine
